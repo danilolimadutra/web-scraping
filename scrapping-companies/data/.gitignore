@@ -1,0 +1,4 @@
+test.py
+data/*.csv
+!categories_url.csv
+!companies_url.csv
