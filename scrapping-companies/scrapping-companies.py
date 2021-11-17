@@ -8,67 +8,65 @@ ws = WebScrapping()
 
 # Scrapping a list of URL categories
 url = "https://business.edmontonchamber.com/list"
-catFileName = 'categories_url'
-compFileName = 'companies_url'
+cat_file_name = 'categories_url'
+comp_file_name = 'companies_url'
 
-"""
-categoryList = ws.scrapCategories(url)
+category_list = ws.scrap_categories(url)
 
 # Save URL categories in a CSV file
-categoryHeader = ['Category Name', 'Category URL']
-categoryList.insert(0, categoryHeader)
-ws.createCSV(catFileName, categoryList)
+category_header = ['Category Name', 'Category URL']
+category_list.insert(0, category_header)
+ws.create_csv(cat_file_name, category_list)
 
 # read url categories file for further scrapping
-categoriesUrl = ws.getValueFromCsv(catFileName, 'Category URL')
+categories_url = ws.get_value_from_csv(cat_file_name, 'Category URL')
 
 # scraping a list of URL companies
-companies = ws.scrapCompaniesUrl(categoriesUrl)
+companies = ws.scrap_companies_url(categories_url)
 
 # Save URL companies in a CSV file
-companyHeader = ['Company Name', 'Company URL']
-companies.insert(0, companyHeader)
-ws.createCSV(compFileName, companies)
+company_header = ['Company Name', 'Company URL']
+companies.insert(0, company_header)
+ws.create_csv(comp_file_name, companies)
 
-"""
 # starting scraping of companies data
 print('LOG: START SCRAPPING COMPANIES ============================')
 
 # read url companies file for further scrapping
-companiesUrl = ws.getValueFromCsv(compFileName, 'Company URL')
+companies_url = ws.get_value_from_csv(comp_file_name, 'Company URL')
 
-companyList = list()
+company_list = list()
 header = ['URL', 'Name', 'Category', 'Address', 'City', 'Region', 'Postal Code',
           'Google Maps', 'Phone', 'Site', 'Fax', 'Contact Name',
           'Contact Title', 'Contact Phone', 'Email']
-companyList.append(header)
+company_list.append(header)
 
 # is possible to define the range of data to colect. In case you need to restart for any problem.
-start = 90
-stop = 100
-#stop = len(companiesUrl)
-countComp = start
-for companyUrl in companiesUrl[start:stop]:
+start = 0
+stop = 5
+#stop = len(companies_url)
+count_comp = start
+for company_url in companies_url[start:stop]:
     sec = randint(1, 10)
     print(f"LOG: wait {int(sec)} sec.")
     time.sleep(sec)
-    print(f"LOG: {str(countComp)} from {str(stop)} -> {companyUrl}")
-    countComp += 1
+    print(f"LOG: {str(count_comp)} from {str(stop)} -> {company_url}")
+    count_comp += 1
     try:
         # scrapping data companies
-        companyData = ws.scrapCompanyData(companyUrl)
+        company_data = ws.scrap_company_data(company_url)
         email = 'null'
-        if companyData[9] != 'null':
-            emails = ws.scrapEmail(companyData[9])
+        if company_data[9] != 'null':
+            emails = ws.scrap_email(company_data[9])
             if emails:
                 email = emails[0]
-        companyData.append(email)
+        company_data.append(email)
 
-        companyList.append(companyData)
+        company_list.append(company_data)
     except Exception as e:
         print('LOG: FATAL ERROR AT COMPANY DATA COLECTION')
         print('ERROR: ', e)
         break  # Stop data scrapping
 
 # Create companies data CSV file
-ws.createCSV(f"companies_data_{str(start)}-{str(countComp)}", companyList)
+ws.create_csv(f"companies_data_{str(start)}-{str(count_comp)}", company_list)

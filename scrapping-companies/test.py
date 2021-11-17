@@ -16,15 +16,15 @@ ws = WebScrapping()
 urlList = ['http://www.westcanadian.com']
 
 for url in urlList:
-    emails = ws.scrapEmail(url)
+    emails = ws.scrap_email(url)
     print(emails)
 """
 
-companyData = ws.scrapCompanyData(
+companyData = ws.scrap_company_data(
     'https://business.edmontonchamber.com/list/member/madsen-avenue-28020')
 email = 'null'
 if companyData[9] != 'null':
-    emails = ws.scrapEmail(companyData[9])
+    emails = ws.scrap_email(companyData[9])
     if emails:
         email = emails[0]
 companyData.append(email)

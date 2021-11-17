@@ -12,13 +12,13 @@ from urllib import parse
 class WebScrapping:
 
     def __init__(self):
-        self.dataPath = 'data'
+        self.data_path = 'data'
 
     # 1. Capturar todos os links de macro categorias
 
     # parse URL to avoid unicode codec problem
 
-    def urlParse(self, link):
+    def url_parse(self, link):
         scheme, netloc, path, query, fragment = parse.urlsplit(link)
         path = parse.quote(path)
         url = parse.urlunsplit((scheme, netloc, path, query, fragment))
@@ -26,14 +26,14 @@ class WebScrapping:
 
     # scrap email from home and contact page
 
-    def requestPageToSoup(self, url):
+    def request_page_to_soup(self, url):
         # Ignore SSL certificate errors
         self.ctx = ssl.create_default_context()
         self.ctx.check_hostname = False
         self.ctx.verify_mode = ssl.CERT_NONE
 
         try:
-            url = self.urlParse(url)
+            url = self.url_parse(url)
             req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
             html = urlopen(req, context=self.ctx).read()
             soup = BeautifulSoup(html, "html.parser")
@@ -44,16 +44,16 @@ class WebScrapping:
 
         return soup
 
-    def scrapEmail(self, url):
+    def scrap_email(self, url):
         print('LOG: scrapping email from: ', url)
 
-        soup = self.requestPageToSoup(url)
+        soup = self.request_page_to_soup(url)
 
         emails = list()
         if soup:
             tags = soup('a')
-            contactPages = list()
-            contactLink = False
+            contact_pages = list()
+            contact_link = False
             if tags:
                 for tag in tags:
                     link = tag.get('href')
@@ -64,23 +64,23 @@ class WebScrapping:
                                 emails.append(email)
                         if 'contact' in link:
                             if 'http' in link:
-                                contactLink = link
+                                contact_link = link
                             else:
                                 if url[len(url)-1:] == '/' and link[:1] == '/':
-                                    contactLink = url + link[1:]
+                                    contact_link = url + link[1:]
                                 else:
-                                    contactLink = url + link
+                                    contact_link = url + link
 
-                        if contactLink and contactLink not in contactPages:
-                            contactPages.append(contactLink)
+                        if contact_link and contact_link not in contact_pages:
+                            contact_pages.append(contact_link)
 
-            if not emails and contactPages:
-                for url in contactPages:
+            if not emails and contact_pages:
+                for url in contact_pages:
                     print('LOG: scrapping email from contact page: ', url)
                     sec = randint(1, 10)
                     time.sleep(sec)
 
-                    soup = self.requestPageToSoup(url)
+                    soup = self.request_page_to_soup(url)
                     if soup:
                         tags = soup('a')
                         if tags:
@@ -93,56 +93,56 @@ class WebScrapping:
                                             emails.append(email)
             return emails
 
-    def scrapCategories(self, url):
-        soup = self.requestPageToSoup(url)
+    def scrap_categories(self, url):
+        soup = self.request_page_to_soup(url)
 
         tags = soup('a')
 
-        lstCategory = []
+        lst_category = []
         for tag in tags:
             url = tag.get('href')
             if url is not None:
                 if 'list/ql' in url:
-                    lstCategory.append([tag.contents[0], url])
+                    lst_category.append([tag.contents[0], url])
         print('LOG: ending category scrapping')
-        return lstCategory
+        return lst_category
 
     # 2. capturar todos os links das empresas
 
-    def scrapCompaniesUrl(self, lstCategory):
+    def scrap_companies_url(self, lst_category):
         count = 0
-        lstCompany = []
+        lst_company = []
         print('LOG: starting company URL scraping ====================')
-        for url in lstCategory:
+        for url in lst_category:
             sec = randint(1, 10)
             print(f"LOG: waiting {int(sec)} seg.")
             time.sleep(sec)
             count += 1
-            total = len(lstCategory)
+            total = len(lst_category)
             print(
                 f"LOG: scrapping companies URL from category: {str(count)} de {str(total)}")
             print('URL:', url)
-            soup = self.requestPageToSoup(url)
+            soup = self.request_page_to_soup(url)
 
             tags = soup('a')
 
-            lstTemp = list()
-            lstUrl = list()
+            lst_temp = list()
+            lst_url = list()
             for tag in tags:
                 url = tag.get('href')
                 if url is not None:
-                    if 'list/member' in url and url not in lstUrl:
-                        lstUrl.append(url)
-                        lstTemp.append([tag.get('alt'), url])
+                    if 'list/member' in url and url not in lst_url:
+                        lst_url.append(url)
+                        lst_temp.append([tag.get('alt'), url])
 
-            print('LOG: total companies URL from category:', len(lstTemp))
-            lstCompany += lstTemp
+            print('LOG: total companies URL from category:', len(lst_temp))
+            lst_company += lst_temp
 
-        print('LOG: total companies:', len(lstCompany))
-        return lstCompany
+        print('LOG: total companies:', len(lst_company))
+        return lst_company
 
-    def scrapCompanyData(self, url):
-        soup = self.requestPageToSoup(url)
+    def scrap_company_data(self, url):
+        soup = self.request_page_to_soup(url)
 
         company = list()
         company.append(url)
@@ -178,14 +178,14 @@ class WebScrapping:
             company.append('null')
 
         try:
-            postalCode = soup.find('span', itemprop="postalCode")
-            company.append(postalCode.contents[0])
+            postal_code = soup.find('span', itemprop="postalCode")
+            company.append(postal_code.contents[0])
         except:
             company.append('null')
 
         try:
-            googleMaps = soup.find('a', class_='card-link')
-            company.append(googleMaps.get('href'))
+            google_maps = soup.find('a', class_='card-link')
+            company.append(google_maps.get('href'))
         except:
             company.append('null')
 
@@ -208,60 +208,60 @@ class WebScrapping:
             company.append('null')
 
         try:
-            repName = soup.find('div', class_='gz-member-repname')
-            company.append(repName.contents[0])
+            rep_name = soup.find('div', class_='gz-member-repname')
+            company.append(rep_name.contents[0])
         except:
             company.append('null')
 
         try:
-            repTitle = soup.find('div', class_='gz-member-reptitle')
-            company.append(repTitle.contents[0])
+            rep_title = soup.find('div', class_='gz-member-reptitle')
+            company.append(rep_title.contents[0])
         except:
             company.append('null')
 
         try:
-            repPhone = soup.find('span', class_='gz-rep-phone-num')
-            company.append(repPhone.contents[0])
+            rep_phone = soup.find('span', class_='gz-rep-phone-num')
+            company.append(rep_phone.contents[0])
         except:
             company.append('null')
 
         return company
 
-    def createCSV(self, fileName, data):
-        filePath = os.path.join(self.dataPath, f"{fileName}.csv")
-        myFile = open(filePath, 'w', newline='')
-        with myFile:
-            writer = csv.writer(myFile, delimiter=';')
+    def create_csv(self, file_name, data):
+        file_path = os.path.join(self.data_path, f"{file_name}.csv")
+        my_file = open(file_path, 'w', newline='')
+        with my_file:
+            writer = csv.writer(my_file, delimiter=';')
             writer.writerows(data)
-        myFile.close
-        print(f'LOG: ending create of {fileName}.csv')
+        my_file.close
+        print(f'LOG: ending create of {file_name}.csv')
 
-    def readCSV(self, fileName):
-        filePath = os.path.join(self.dataPath, f"{fileName}.csv")
-        with open(filePath, newline='') as myFile:
-            reader = csv.reader(myFile, delimiter=';')
+    def read_csv(self, file_name):
+        file_path = os.path.join(self.data_path, f"{file_name}.csv")
+        with open(file_path, newline='') as my_file:
+            reader = csv.reader(my_file, delimiter=';')
             lst = list()
             for row in reader:
                 lst.append(row)
-        myFile.close()
+        my_file.close()
         return lst
 
-    def getValueFromCsv(self, fileName, columnName):
+    def get_value_from_csv(self, file_name, column_name):
         # read url companies file for further scrapping
-        csvData = self.readCSV(fileName)
+        csv_data = self.read_csv(file_name)
 
         index = 0
-        header = csvData[0]
-        valueIndex = -1
+        header = csv_data[0]
+        value_index = -1
         for value in header:  # ignore the header
-            if value == columnName:
-                valueIndex = index
+            if value == column_name:
+                value_index = index
                 print(f"{index} => {value}")
             index += 1
 
         lst = list()
-        if valueIndex >= 0:
-            for value in csvData[1:]:
-                lst.append(value[valueIndex])
+        if value_index >= 0:
+            for value in csv_data[1:]:
+                lst.append(value[value_index])
 
         return lst
