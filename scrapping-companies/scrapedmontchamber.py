@@ -1,8 +1,8 @@
-from webscrapping import WebScrapping
-from webscrapping import *
+from webscraping import WebScraping
+from webscraping import *
 
 
-class ScrapEdmontChamber(WebScrapping):
+class ScrapEdmontChamber(WebScraping):
     """A Class for specific scraping methods for edmontchamber.com site."""
 
     def __init__(self, data_path='data', base_url='https://business.edmontonchamber.com/list', cat_file_name='categories_url', comp_file_name='companies_url', comp_data_file='companies_data'):
@@ -14,7 +14,7 @@ class ScrapEdmontChamber(WebScrapping):
             comp_file_name (str): name of the company url CSV file without the .csv extension
             cat_file_name (str): name of the company data CSV file without the .csv extension 
         """
-        WebScrapping.__init__(self, data_path)
+        WebScraping.__init__(self, data_path)
         self.base_url = base_url
         self.cat_file_name = cat_file_name
         self.comp_file_name = comp_file_name
@@ -36,7 +36,7 @@ class ScrapEdmontChamber(WebScrapping):
             if url is not None:
                 if 'list/ql' in url:
                     lst_category.append([tag.contents[0], url])
-        print('LOG: ending category scrapping')
+        print('LOG: ending category scraping')
         return lst_category
 
     def save_category_file(self, category_list: list):
@@ -69,7 +69,7 @@ class ScrapEdmontChamber(WebScrapping):
             count += 1
             total = len(lst_category)
             print(
-                f"LOG: scrapping companies URL from category: {str(count)} de {str(total)}")
+                f"LOG: scraping companies URL from category: {str(count)} de {str(total)}")
             print('URL:', url)
             soup = self.request_page_to_soup(url)
 
@@ -204,7 +204,7 @@ class ScrapEdmontChamber(WebScrapping):
         Returns:
             list: list o company data
         """
-        print('LOG: START SCRAPPING COMPANIES ============================')
+        print('LOG: START SCRAPING COMPANIES ============================')
         stop = len(companies_url) if stop is None else stop
 
         count_comp = start
@@ -217,7 +217,7 @@ class ScrapEdmontChamber(WebScrapping):
                 f"LOG: {str(count_comp)} from {str(stop)} -> {company_url}")
             count_comp += 1
             try:
-                # scrapping data companies
+                # scraping data companies
                 company_data = self.scrap_company_data(company_url)
                 email = 'null'
                 if company_data[9] != 'null':
@@ -230,7 +230,7 @@ class ScrapEdmontChamber(WebScrapping):
             except Exception as e:
                 print('LOG: FATAL ERROR AT COMPANY DATA COLECTION')
                 print('ERROR: ', e)
-                break  # Stop data scrapping
+                break  # Stop data scraping
 
             if company_data:
                 self.write_company_data(company_data, self.comp_data_file_name)

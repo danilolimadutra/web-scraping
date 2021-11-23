@@ -10,8 +10,8 @@ from urllib import parse
 import datetime
 
 
-class WebScrapping:
-    """A class to agregate all common methods of webscrapping for every site."""
+class WebScraping:
+    """A class to agregate all common methods of webscraping for every site."""
 
     def __init__(self, data_path='data'):
         """
@@ -73,7 +73,7 @@ class WebScrapping:
             list: a list of emails string
         """
 
-        print('LOG: scrapping email from: ', url)
+        print('LOG: scraping email from: ', url)
 
         soup = self.request_page_to_soup(url)
 
@@ -104,7 +104,7 @@ class WebScrapping:
 
             if not emails and contact_pages:
                 for url in contact_pages:
-                    print('LOG: scrapping email from contact page: ', url)
+                    print('LOG: scraping email from contact page: ', url)
                     sec = randint(1, 10)
                     time.sleep(sec)
 
@@ -180,7 +180,7 @@ class WebScrapping:
         Returns:
             list: a list containing all the column data.
         """
-        # read url companies file for further scrapping
+        # read url companies file for further scraping
         csv_data = self.read_csv(file_name)
 
         index = 0
