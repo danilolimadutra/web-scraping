@@ -2,7 +2,7 @@
 
 A web scraping project focused on scrap companies data from the Edmonton Chamber directory website: [https://business.edmontonchamber.com/list](https://business.edmontonchamber.com/list)
 
-It was a freelancer working for a client in UpWork. The main system contains the following steps for scraping the data.
+It was a freelancer working for a client. The main system contains the following steps for scraping the data.
 
 1. Scrap all category URLs from the Edmonton Chamber directory website.
 2. Save categories URL on CSV file.
